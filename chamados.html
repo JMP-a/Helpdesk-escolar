@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <script src="JS/storage.js" defer></script>
     <script src="chamados.js" defer></script>
 </head>
+
 <body>
     <header class="topo">
         <div class="topo-conteudo">
@@ -32,16 +34,32 @@
                 </p>
             </div>
 
-            <div class="campo campo-filtro">
-                <label for="filtro-status">Filtrar por status</label>
+            <div class="controles-lista">
 
-                <select id="filtro-status">
-                    <option value="Todos">Todos</option>
-                    <option value="Aberto">Aberto</option>
-                    <option value="Em andamento">Em andamento</option>
-                    <option value="Resolvido">Resolvido</option>
-                </select>
+                <div class="campo campo-filtro">
+                    <label for="filtro-status">Filtrar por status</label>
+
+                    <select id="filtro-status">
+                        <option value="Todos">Todos</option>
+                        <option value="Aberto">Aberto</option>
+                        <option value="Em andamento">Em andamento</option>
+                        <option value="Resolvido">Resolvido</option>
+                    </select>
+                </div>
+
+                <div class="campo campo-filtro">
+                    <label for="ordenar-chamados">Ordenar por</label>
+
+                    <select id="ordenar-chamados">
+                        <option value="recente">Mais recente primeiro</option>
+                        <option value="antigo">Mais antigo primeiro</option>
+                        <option value="prioridade">Prioridade (Alta → Baixa)</option>
+                    </select>
+                </div>
+
             </div>
+
+        </div>
         </div>
 
         <div id="lista-chamados" class="lista-chamados"></div>
@@ -52,4 +70,5 @@
 
     </main>
 </body>
+
 </html>

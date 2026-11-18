@@ -1,15 +1,19 @@
 const containerLista = document.getElementById("lista-chamados");
 const mensagemVazia = document.getElementById("mensagem-vazia");
 const filtroStatus = document.getElementById("filtro-status");
+const ordenarChamados = document.getElementById("ordenar-chamados");
 
 // Renderiza os chamados ao abrir a página.
 renderizarLista();
 
 // Atualiza a lista quando o filtro muda.
 filtroStatus.addEventListener("change", renderizarLista);
+ordenarChamados.addEventListener("change", renderizarLista);
 
 function renderizarLista() {
+
     const statusSelecionado = filtroStatus.value;
+    const ordenacaoSelecionada = ordenarChamados.value;
 
     const chamados = filtrarPorStatus(statusSelecionado);
 
@@ -22,14 +26,43 @@ function renderizarLista() {
 
     mensagemVazia.hidden = true;
 
-    // Mostra os chamados mais recentes primeiro.
-    const chamadosOrdenados = [...chamados].reverse();
+    // Cria uma cópia para não modificar a lista original.
+    const chamadosOrdenados = [...chamados];
+
+    // Ordenação por data ou prioridade.
+    chamadosOrdenados.sort((a, b) => {
+
+        if (ordenacaoSelecionada === "recente") {
+            return new Date(b.dataCriacao) - new Date(a.dataCriacao);
+        }
+
+        if (ordenacaoSelecionada === "antigo") {
+            return new Date(a.dataCriacao) - new Date(b.dataCriacao);
+        }
+
+        if (ordenacaoSelecionada === "prioridade") {
+
+            const pesos = {
+                "Alta": 3,
+                "Média": 2,
+                "Baixa": 1
+            };
+
+            return pesos[b.prioridade] - pesos[a.prioridade];
+        }
+
+        return 0;
+
+    });
 
     chamadosOrdenados.forEach(chamado => {
+
         containerLista.appendChild(
             criarCartaoChamado(chamado)
         );
+
     });
+
 }
 
 // Cria um elemento HTML com texto seguro.
@@ -123,7 +156,20 @@ function criarCartaoChamado(chamado) {
     label.htmlFor = `status-${chamado.id}`;
     seletorStatus.id = `status-${chamado.id}`;
 
-    rodape.append(label, seletorStatus);
+    // Botão de excluir chamado.
+    const botaoExcluir = criarElemento(
+        "button",
+        "botao-excluir",
+        "Excluir"
+    );
+
+    botaoExcluir.type = "button";
+
+    botaoExcluir.addEventListener("click", () => {
+        aoExcluirChamado(chamado.id);
+    });
+
+    rodape.append(label, seletorStatus, botaoExcluir);
 
     cartao.append(
         topo,
@@ -149,6 +195,28 @@ function aoMudarStatus(evento) {
     }
 
     renderizarLista();
+}
+
+// Executada quando o usuário solicita a exclusão.
+function aoExcluirChamado(id) {
+
+    const confirmou = confirm(
+        `Tem certeza de que deseja excluir o chamado #${id}?`
+    );
+
+    if (!confirmou) {
+        return;
+    }
+
+    const sucesso = removerChamado(id);
+
+    if (!sucesso) {
+        alert("Não foi possível excluir esse chamado.");
+        return;
+    }
+
+    renderizarLista();
+
 }
 
 // Formata a data para DD/MM/AAAA HH:MM.

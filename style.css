@@ -199,6 +199,33 @@ textarea {
     margin-bottom: 0;
 }
 
+/* Controles de filtro e ordenação */
+
+.controles-lista {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.controles-lista .campo-filtro {
+    min-width: 190px;
+}
+
+/* Adaptação para telas menores */
+
+@media (max-width: 600px) {
+
+    .controles-lista {
+        width: 100%;
+    }
+
+    .controles-lista .campo-filtro {
+        flex: 1 1 190px;
+    }
+
+}
+
 /* Lista de chamados */
 
 .lista-chamados {
@@ -286,6 +313,25 @@ textarea {
 
 .select-status {
     max-width: 190px;
+}
+
+/* Botão de excluir chamado */
+
+.botao-excluir {
+    padding: 10px 16px;
+    background: #FCE8E5;
+    color: #B5502F;
+    border: 1px solid #E8B9AD;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.botao-excluir:hover {
+    background: #F5D5CF;
 }
 
 /* Mensagem quando não há chamados */
