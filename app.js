@@ -5,6 +5,7 @@ formChamado.addEventListener("submit", function(evento) {
     evento.preventDefault();
 
     const dadosChamado = {
+        solicitante: document.getElementById("solicitante").value.trim(),
         setor: document.getElementById("setor").value.trim(),
         prioridade: document.getElementById("prioridade").value,
         descricao: document.getElementById("descricao").value.trim()
@@ -36,6 +37,7 @@ formChamado.addEventListener("submit", function(evento) {
 
 function validarDadosChamado(dados) {
     return (
+        dados.solicitante !== "" &&
         dados.setor !== "" &&
         dados.prioridade !== "" &&
         dados.descricao !== ""

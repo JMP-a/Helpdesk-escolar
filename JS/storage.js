@@ -52,6 +52,7 @@ function salvarChamado(dadosChamado) {
 
     const novoChamado = {
         id: gerarNovoID(),
+        solicitante: dadosChamado.solicitante,
         setor: dadosChamado.setor,
         descricao: dadosChamado.descricao,
         prioridade: dadosChamado.prioridade,
@@ -118,6 +119,33 @@ function removerChamado(id) {
     salvarListaCompleta(listaAtualizada);
 
     return true;
+}
+
+// Busca chamados pelo nome ou descrição.
+function buscarChamadosPorTexto(termo) {
+
+    const chamados = listarChamados();
+
+    const pesquisa = termo
+        .trim()
+        .toLowerCase();
+
+    if (!pesquisa) {
+        return chamados;
+    }
+
+    return chamados.filter(chamado => {
+
+        const solicitante = chamado.solicitante || "";
+        const descricao = chamado.descricao || "";
+
+        return (
+            solicitante.toLowerCase().includes(pesquisa) ||
+            descricao.toLowerCase().includes(pesquisa)
+        );
+
+    });
+
 }
 
 // Apaga todos os chamados.

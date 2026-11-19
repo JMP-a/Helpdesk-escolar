@@ -1,3 +1,4 @@
+const campoBusca = document.getElementById("buscar-chamados");
 const containerLista = document.getElementById("lista-chamados");
 const mensagemVazia = document.getElementById("mensagem-vazia");
 const filtroStatus = document.getElementById("filtro-status");
@@ -7,6 +8,7 @@ const ordenarChamados = document.getElementById("ordenar-chamados");
 renderizarLista();
 
 // Atualiza a lista quando o filtro muda.
+campoBusca.addEventListener("input", renderizarLista);
 filtroStatus.addEventListener("change", renderizarLista);
 ordenarChamados.addEventListener("change", renderizarLista);
 
@@ -15,7 +17,18 @@ function renderizarLista() {
     const statusSelecionado = filtroStatus.value;
     const ordenacaoSelecionada = ordenarChamados.value;
 
-    const chamados = filtrarPorStatus(statusSelecionado);
+    const termo = campoBusca.value;
+
+    const resultadoBusca = buscarChamadosPorTexto(termo);
+
+    const chamados = resultadoBusca.filter(chamado => {
+
+        return (
+            statusSelecionado === "Todos" ||
+            chamado.status === statusSelecionado
+        );
+
+    });
 
     containerLista.innerHTML = "";
 
