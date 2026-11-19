@@ -19,6 +19,9 @@
 body {
     margin: 0;
     font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: var(--fundo);
     color: var(--tinta);
 }
@@ -353,6 +356,26 @@ textarea {
     padding: 30px;
 }
 
+/* Rodapé */
+
+main.conteudo {
+    flex: 1;
+}
+
+.rodape {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    background: var(--superficie);
+    border-top: 1px solid var(--linha);
+}
+
+.rodape p {
+    margin: 0;
+    color: var(--tinta-suave);
+    font-size: 12px;
+}
+
 /* Responsividade */
 
 @media (max-width: 600px) {
@@ -390,4 +413,5 @@ textarea {
     .select-status {
         max-width: none;
     }
+
 }
