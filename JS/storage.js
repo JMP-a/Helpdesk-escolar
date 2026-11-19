@@ -138,10 +138,12 @@ function buscarChamadosPorTexto(termo) {
 
         const solicitante = chamado.solicitante || "";
         const descricao = chamado.descricao || "";
+        const setor = chamado.setor || "";
 
         return (
             solicitante.toLowerCase().includes(pesquisa) ||
-            descricao.toLowerCase().includes(pesquisa)
+            descricao.toLowerCase().includes(pesquisa) ||
+            setor.toLowerCase().includes(pesquisa)
         );
 
     });

@@ -115,6 +115,12 @@ function criarCartaoChamado(chamado) {
     topo.append(numero, prioridade);
 
     // Informações.
+    const solicitante = criarElemento(
+        "p",
+        "info-solicitante",
+        `Solicitante: ${chamado.solicitante || "Não informado"}`
+    );
+
     const titulo = criarElemento(
         "h2",
         "titulo-chamado",
@@ -187,6 +193,7 @@ function criarCartaoChamado(chamado) {
     cartao.append(
         topo,
         titulo,
+        solicitante,
         descricao,
         data,
         rodape

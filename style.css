@@ -254,6 +254,14 @@ textarea {
     color: var(--tinta-suave);
 }
 
+/* Nome do solicitante nos cartões */
+
+.info-solicitante {
+    font-size: 13px;
+    color: #777;
+    margin: 5px 0 10px;
+}
+
 .badge-prioridade {
     padding: 5px 10px;
     border-radius: 20px;
