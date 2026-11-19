@@ -1,0 +1,21 @@
+
+{
+  "name": "HelpDesk Escolar",
+  "short_name": "HelpDesk",
+  "description": "Sistema de abertura e acompanhamento de chamados escolares.",
+  "lang": "pt-BR",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F6F8",
+  "theme_color": "#2F6F5E",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
