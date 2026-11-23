@@ -154,3 +154,37 @@ function buscarChamadosPorTexto(termo) {
 function limparTodosChamados() {
     localStorage.removeItem(CHAVE_STORAGE);
 }
+
+// Atualiza a descrição e a prioridade de um chamado.
+function atualizarChamado(id, novosDados) {
+
+    const prioridadesDisponiveis = [
+        "Alta",
+        "Média",
+        "Baixa"
+    ];
+
+    if (
+        !novosDados.descricao.trim() ||
+        !prioridadesDisponiveis.includes(novosDados.prioridade)
+    ) {
+        return false;
+    }
+
+    const chamados = listarChamados();
+
+    const chamado = chamados.find(
+        chamado => chamado.id === id
+    );
+
+    if (!chamado) {
+        return false;
+    }
+
+    chamado.descricao = novosDados.descricao.trim();
+    chamado.prioridade = novosDados.prioridade;
+
+    salvarListaCompleta(chamados);
+
+    return true;
+}

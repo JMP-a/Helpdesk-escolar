@@ -415,3 +415,22 @@ main.conteudo {
     }
 
 }
+
+/* Botão de editar chamado */
+
+.botao-editar {
+    padding: 10px 16px;
+    background: #E8EEF9;
+    color: #315A9B;
+    border: 1px solid #B9CBE8;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.botao-editar:hover {
+    background: #D6E2F5;
+}

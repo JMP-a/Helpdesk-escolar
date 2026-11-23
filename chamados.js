@@ -175,6 +175,19 @@ function criarCartaoChamado(chamado) {
     label.htmlFor = `status-${chamado.id}`;
     seletorStatus.id = `status-${chamado.id}`;
 
+    // Botão de editar chamado.
+    const botaoEditar = criarElemento(
+        "button",
+        "botao-editar",
+        "Editar"
+    );
+
+    botaoEditar.type = "button";
+
+    botaoEditar.addEventListener("click", () => {
+        aoEditarChamado(chamado.id);
+    });
+
     // Botão de excluir chamado.
     const botaoExcluir = criarElemento(
         "button",
@@ -188,7 +201,12 @@ function criarCartaoChamado(chamado) {
         aoExcluirChamado(chamado.id);
     });
 
-    rodape.append(label, seletorStatus, botaoExcluir);
+    rodape.append(
+        label,
+        seletorStatus,
+        botaoEditar,
+        botaoExcluir
+    );
 
     cartao.append(
         topo,
@@ -215,6 +233,27 @@ function aoMudarStatus(evento) {
     }
 
     renderizarLista();
+}
+
+// Encaminha o chamado selecionado para edição.
+function aoEditarChamado(id) {
+
+    const chamado = listarChamados().find(
+        chamado => chamado.id === id
+    );
+
+    if (!chamado) {
+        alert("Chamado não encontrado.");
+        return;
+    }
+
+    sessionStorage.setItem(
+        "chamadoEmEdicao",
+        String(id)
+    );
+
+    window.location.href = "index.html";
+
 }
 
 // Executada quando o usuário solicita a exclusão.
