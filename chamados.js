@@ -192,7 +192,7 @@ function criarCartaoChamado(chamado) {
     const botaoExcluir = criarElemento(
         "button",
         "botao-excluir",
-        "Exluir"
+        "Excluir"
     );
 
     botaoExcluir.type = "button";

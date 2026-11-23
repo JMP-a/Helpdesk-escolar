@@ -12,11 +12,14 @@ if (idEmEdicao !== null) {
 
     const id = Number(idEmEdicao);
 
-    chamadoEmEdicao = listarChamados().find(
-        chamado => chamado.id === id
-    );
+    chamadoEmEdicao = listarChamados().find(chamado => chamado.id === id);
 
     if (chamadoEmEdicao) {
+
+        document.getElementById("solicitante").value =
+            chamadoEmEdicao.solicitante || "Não informado";
+
+        document.getElementById("solicitante").readOnly = true;
 
         document.getElementById("setor").value =
             chamadoEmEdicao.setor;
@@ -45,7 +48,7 @@ if (idEmEdicao !== null) {
     }
 }
 
-formChamado.addEventListener("submit", function(evento) {
+formChamado.addEventListener("submit", function (evento) {
     evento.preventDefault();
 
     const dadosChamado = {
@@ -56,45 +59,45 @@ formChamado.addEventListener("submit", function(evento) {
     };
 
     // Se estiver editando, atualiza o chamado existente.
-if (chamadoEmEdicao) {
+    if (chamadoEmEdicao) {
 
-    const novosDados = {
-        descricao: document.getElementById("descricao").value.trim(),
-        prioridade: document.getElementById("prioridade").value
-    };
+        const novosDados = {
+            descricao: document.getElementById("descricao").value.trim(),
+            prioridade: document.getElementById("prioridade").value
+        };
 
-    if (
-        !novosDados.descricao ||
-        !novosDados.prioridade
-    ) {
-        exibirMensagem(
-            "Preencha todos os campos.",
-            "erro"
+        if (
+            !novosDados.descricao ||
+            !novosDados.prioridade
+        ) {
+            exibirMensagem(
+                "Preencha todos os campos.",
+                "erro"
+            );
+
+            return;
+        }
+
+        const sucesso = atualizarChamado(
+            chamadoEmEdicao.id,
+            novosDados
         );
+
+        if (!sucesso) {
+            exibirMensagem(
+                "Não foi possível atualizar o chamado.",
+                "erro"
+            );
+
+            return;
+        }
+
+        sessionStorage.removeItem("chamadoEmEdicao");
+
+        window.location.href = "chamados.html";
 
         return;
     }
-
-    const sucesso = atualizarChamado(
-        chamadoEmEdicao.id,
-        novosDados
-    );
-
-    if (!sucesso) {
-        exibirMensagem(
-            "Não foi possível atualizar o chamado.",
-            "erro"
-        );
-
-        return;
-    }
-
-    sessionStorage.removeItem("chamadoEmEdicao");
-
-    window.location.href = "chamados.html";
-
-    return;
-}
 
     if (!validarDadosChamado(dadosChamado)) {
         exibirMensagem("Preencha todos os campos.", "erro");
