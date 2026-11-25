@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,26 +26,16 @@
                 Entre para acessar o Helpdesk Escolar.
             </p>
 
-            <form onsubmit="event.preventDefault(); entrarDemo();">
+            <form id="formEntrada">
 
                 <div class="campo">
                     <label for="cpf">CPF</label>
-                    <input
-                        type="text"
-                        id="cpf"
-                        placeholder="CPF fictício"
-                        autocomplete="off"
-                    >
+                    <input type="text" id="cpf" placeholder="CPF fictício" autocomplete="off" required>
                 </div>
 
                 <div class="campo">
                     <label for="senha">Senha</label>
-                    <input
-                        type="password"
-                        id="senha"
-                        placeholder="Senha fictícia"
-                        autocomplete="off"
-                    >
+                    <input type="password" id="senha" placeholder="Senha fictícia" autocomplete="off" required>
                 </div>
 
                 <button type="submit" class="botao-principal">
@@ -53,7 +43,7 @@
                 </button>
 
             </form>
-            
+
         </section>
 
     </main>
@@ -62,11 +52,9 @@
         <p>Copyright © 2026 by João Pedro</p>
     </footer>
 
-    <script>
-        function entrarDemo() {
-            window.location.href = "criar.html";
-        }
-    </script>
+    </html>
+
+    <script src="JS/storage.js"></script>
+    <script src="entrada.js"></script>
 
 </body>
-</html>

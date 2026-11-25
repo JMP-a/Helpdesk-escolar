@@ -188,3 +188,7 @@ function atualizarChamado(id, novosDados) {
 
     return true;
 }
+
+function salvarEntradaDemo() {
+    localStorage.setItem("helpdesk_login_demo", "true");
+}
