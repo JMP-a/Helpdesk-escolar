@@ -434,3 +434,30 @@ main.conteudo {
 .botao-editar:hover {
     background: #D6E2F5;
 }
+/* Estrutura exclusiva da tela de entrada */
+.pagina-entrada {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.conteudo-entrada {
+    flex: 1;
+    width: 100%;
+    max-width: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+}
+
+.cartao-entrada {
+    width: 100%;
+    max-width: 420px;
+}
+
+@media (max-width: 600px) {
+    .conteudo-entrada {
+        padding: 24px 16px;
+    }
+}
