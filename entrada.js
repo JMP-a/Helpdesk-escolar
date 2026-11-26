@@ -10,17 +10,6 @@ formEntrada.addEventListener("submit", function(event) {
     // 1. Verificação do CPF
     const formatoCPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
 
-    if (!formatoCPF.test(cpf)) {
-        alert("Digite o CPF no formato 123.456.789-10.");
-        return;
-    }
-
-    // 2. Verificação da senha
-    if (senha.length < 8) {
-        alert("A senha deve ter no mínimo 8 caracteres.");
-        return;
-    }
-
     // 3. Se passar pelas duas verificações
     salvarEntradaDemo();
 
@@ -34,16 +23,6 @@ formDirecao.addEventListener("submit", function(event) {
     const senha = document.getElementById("senhaDirecao").value;
 
     const formatoCPF = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-
-    if (!formatoCPF.test(cpf)) {
-        alert("Digite o CPF no formato 123.456.789-10.");
-        return;
-    }
-
-    if (senha.length < 8) {
-        alert("A senha deve ter no mínimo 8 caracteres.");
-        return;
-    }
 
     // Identifica o acesso como Direção
     localStorage.setItem("tipoUsuario", "direcao");
