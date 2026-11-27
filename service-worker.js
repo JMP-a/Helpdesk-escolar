@@ -1,14 +1,17 @@
 
-const CACHE_NAME = "helpdesk-escolar-v1";
+const CACHE_NAME = "helpdesk-escolar-v2";
 
 const ARQUIVOS = [
     "./",
     "./index.html",
+    "./criar.html",
     "./chamados.html",
     "./style.css",
     "./app.js",
     "./chamados.js",
     "./JS/storage.js",
+    "./banco/config.js",
+    "./banco/supabase.js",
     "./manifest.json",
     "./icon.svg"
 ];
