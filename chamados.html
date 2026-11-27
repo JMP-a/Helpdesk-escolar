@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HelpDesk Escolar - Chamados</title>
     <link rel="stylesheet" href="style.css">
-
-    <script src="JS/storage.js" defer></script>
-    <script src="chamados.js" defer></script>
 </head>
 
 <body>
@@ -66,7 +63,6 @@
             </div>
 
         </div>
-        </div>
 
         <div id="lista-chamados" class="lista-chamados"></div>
 
@@ -120,9 +116,9 @@
                 return;
             }
 
-            // Se passou por todas as verificações, carrega o painel
+            // Se passou por todas as verificações, carrega a listagem
             const script = document.createElement("script");
-            script.src = "app.js";
+            script.src = "chamados.js";
             document.body.appendChild(script);
 
         })();

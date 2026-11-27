@@ -2,53 +2,65 @@ const formChamado = document.getElementById("form-chamado");
 const mensagemStatus = document.getElementById("mensagem-status");
 
 // Verifica se existe um chamado sendo editado.
+// Verifica se existe um chamado sendo editado.
 let chamadoEmEdicao = null;
 
-const idEmEdicao = sessionStorage.getItem(
-    "chamadoEmEdicao"
-);
+const idEmEdicao = sessionStorage.getItem("chamadoEmEdicao");
 
-if (idEmEdicao !== null) {
+async function carregarChamadoEmEdicao() {
 
-    const id = Number(idEmEdicao);
+    if (idEmEdicao === null) {
+        return;
+    }
 
-    chamadoEmEdicao = listarChamados().find(chamado => chamado.id === id);
+    const { data: chamado, error } = await supabaseClient
+        .from("chamados")
+        .select("*")
+        .eq("id", Number(idEmEdicao))
+        .single();
 
-    if (chamadoEmEdicao) {
-
-        document.getElementById("solicitante").value =
-            chamadoEmEdicao.solicitante || "Não informado";
-
-        document.getElementById("solicitante").readOnly = true;
-
-        document.getElementById("setor").value =
-            chamadoEmEdicao.setor;
-
-        document.getElementById("setor").readOnly = true;
-
-        document.getElementById("prioridade").value =
-            chamadoEmEdicao.prioridade;
-
-        document.getElementById("descricao").value =
-            chamadoEmEdicao.descricao;
-
-        document.querySelector("h1").textContent =
-            `Editar chamado #${id}`;
-
-        formChamado.querySelector(
-            'button[type="submit"]'
-        ).textContent = "Salvar alterações";
-
-    } else {
+    if (error || !chamado) {
+        console.error("Erro ao buscar chamado:", error);
 
         sessionStorage.removeItem("chamadoEmEdicao");
 
-        alert("O chamado selecionado não foi encontrado.");
-
+        alert("O chamado não foi encontrado.");
+        window.location.href = "chamados.html";
+        return;
     }
+
+    chamadoEmEdicao = chamado;
+
+    document.getElementById("solicitante").value =
+        chamado.solicitante || "Não informado";
+
+    document.getElementById("solicitante").readOnly = true;
+
+    document.getElementById("setor").value =
+        chamado.setor;
+
+    document.getElementById("setor").readOnly = true;
+
+    document.getElementById("prioridade").value = {
+        baixa: "Baixa",
+        media: "Média",
+        alta: "Alta"
+    }[chamado.prioridade];
+
+    document.getElementById("descricao").value =
+        chamado.descricao;
+
+    document.querySelector("h1").textContent =
+        `Editar chamado #${chamado.id}`;
+
+    formChamado.querySelector(
+        'button[type="submit"]'
+    ).textContent = "Salvar alterações";
 }
 
-formChamado.addEventListener("submit", function (evento) {
+carregarChamadoEmEdicao();
+
+formChamado.addEventListener("submit", async function (evento) {
     evento.preventDefault();
 
     const dadosChamado = {
@@ -78,12 +90,22 @@ formChamado.addEventListener("submit", function (evento) {
             return;
         }
 
-        const sucesso = atualizarChamado(
-            chamadoEmEdicao.id,
-            novosDados
-        );
+        const prioridadeBanco = novosDados.prioridade
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "");
 
-        if (!sucesso) {
+        const { error } = await supabaseClient
+            .from("chamados")
+            .update({
+                descricao: novosDados.descricao,
+                prioridade: prioridadeBanco
+            })
+            .eq("id", chamadoEmEdicao.id);
+
+        if (error) {
+            console.error("Erro ao editar chamado:", error);
+
             exibirMensagem(
                 "Não foi possível atualizar o chamado.",
                 "erro"
@@ -105,17 +127,47 @@ formChamado.addEventListener("submit", function (evento) {
     }
 
     try {
-        const chamadoCriado = salvarChamado(dadosChamado);
+
+        // Verifica o usuário autenticado
+        const { data: { user }, error: erroUsuario } =
+            await supabaseClient.auth.getUser();
+
+        if (erroUsuario || !user) {
+            throw new Error("Usuário não autenticado.");
+        }
+
+        // Salva o chamado no Supabase
+        const { data: chamadoCriado, error } =
+            await supabaseClient
+                .from("chamados")
+                .insert({
+                    solicitante_id: user.id,
+                    solicitante: dadosChamado.solicitante,
+                    setor: dadosChamado.setor,
+                    prioridade: dadosChamado.prioridade
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, ""),
+                    descricao: dadosChamado.descricao
+                })
+                .select()
+                .single();
+
+        if (error) {
+            throw error;
+        }
 
         exibirMensagem(
-            `Chamado #${chamadoCriado.id} registrado com sucesso!`,
+            "Chamado registrado com sucesso!",
             "sucesso"
         );
 
         formChamado.reset();
 
     } catch (erro) {
-        console.error(erro);
+
+        console.error("Erro ao salvar chamado:", erro);
+
         exibirMensagem(
             "Não foi possível salvar o chamado.",
             "erro"

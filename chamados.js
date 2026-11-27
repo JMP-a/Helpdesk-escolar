@@ -4,22 +4,78 @@ const mensagemVazia = document.getElementById("mensagem-vazia");
 const filtroStatus = document.getElementById("filtro-status");
 const ordenarChamados = document.getElementById("ordenar-chamados");
 
-// Renderiza os chamados ao abrir a página.
-renderizarLista();
+const STATUS_DISPONIVEIS = [
+    "Aberto",
+    "Em andamento",
+    "Resolvido"
+];
 
-// Atualiza a lista quando o filtro muda.
+// Lista recebida do Supabase
+let chamadosBanco = [];
+
+// Carrega os chamados ao abrir a página
+carregarChamados();
+
 campoBusca.addEventListener("input", renderizarLista);
 filtroStatus.addEventListener("change", renderizarLista);
 ordenarChamados.addEventListener("change", renderizarLista);
 
+// Busca os chamados no Supabase
+async function carregarChamados() {
+
+    const { data, error } = await supabaseClient
+        .from("chamados")
+        .select("*")
+        .order("criado_em", { ascending: false });
+
+    if (error) {
+        console.error("Erro ao buscar chamados:", error);
+        alert("Não foi possível carregar os chamados.");
+        return;
+    }
+
+    // Adapta os dados do banco para o formato usado nos cartões
+    chamadosBanco = data.map(chamado => ({
+        id: chamado.id,
+        solicitante_id: chamado.solicitante_id,
+        solicitante: chamado.solicitante,
+        setor: chamado.setor,
+        descricao: chamado.descricao,
+
+        prioridade: {
+            baixa: "Baixa",
+            media: "Média",
+            alta: "Alta"
+        }[chamado.prioridade] || chamado.prioridade,
+
+        status: {
+            "aberto": "Aberto",
+            "em andamento": "Em andamento",
+            "concluido": "Resolvido"
+        }[chamado.status] || chamado.status,
+
+        dataCriacao: chamado.criado_em
+    }));
+
+    renderizarLista();
+}
+
+// Renderiza os chamados
 function renderizarLista() {
 
     const statusSelecionado = filtroStatus.value;
     const ordenacaoSelecionada = ordenarChamados.value;
+    const termo = campoBusca.value.toLowerCase().trim();
 
-    const termo = campoBusca.value;
+    // Pesquisa pelo nome ou descrição
+    const resultadoBusca = chamadosBanco.filter(chamado => {
 
-    const resultadoBusca = buscarChamadosPorTexto(termo);
+        return (
+            chamado.solicitante.toLowerCase().includes(termo) ||
+            chamado.descricao.toLowerCase().includes(termo)
+        );
+
+    });
 
     const chamados = resultadoBusca.filter(chamado => {
 
@@ -39,10 +95,9 @@ function renderizarLista() {
 
     mensagemVazia.hidden = true;
 
-    // Cria uma cópia para não modificar a lista original.
     const chamadosOrdenados = [...chamados];
 
-    // Ordenação por data ou prioridade.
+    // Ordenação por data ou prioridade
     chamadosOrdenados.sort((a, b) => {
 
         if (ordenacaoSelecionada === "recente") {
@@ -65,7 +120,6 @@ function renderizarLista() {
         }
 
         return 0;
-
     });
 
     chamadosOrdenados.forEach(chamado => {
@@ -75,7 +129,6 @@ function renderizarLista() {
         );
 
     });
-
 }
 
 // Cria um elemento HTML com texto seguro.
@@ -221,24 +274,50 @@ function criarCartaoChamado(chamado) {
 }
 
 // Executada quando o usuário altera o status.
-function aoMudarStatus(evento) {
+async function aoMudarStatus(evento) {
+
     const id = Number(evento.target.dataset.id);
     const novoStatus = evento.target.value;
 
-    const sucesso = atualizarStatus(id, novoStatus);
+    // Converte o status do painel para o valor do banco
+    const statusBanco = {
+        "Aberto": "aberto",
+        "Em andamento": "em andamento",
+        "Resolvido": "concluido"
+    };
 
-    if (!sucesso) {
+    const statusFinal = statusBanco[novoStatus];
+
+    const { error } = await supabaseClient
+        .from("chamados")
+        .update({ status: statusFinal })
+        .eq("id", id);
+
+    if (error) {
+
+        console.error("Erro ao atualizar status:", error);
+
         alert("Não foi possível atualizar o status desse chamado.");
+        await carregarChamados();
         return;
     }
 
+    // Atualiza o chamado na lista local
+    const chamado = chamadosBanco.find(
+        chamado => chamado.id === id
+    );
+
+    if (chamado) {
+        chamado.status = novoStatus;
+    }
+
     renderizarLista();
-}
+} Z
 
 // Encaminha o chamado selecionado para edição.
 function aoEditarChamado(id) {
 
-    const chamado = listarChamados().find(
+    const chamado = chamadosBanco.find(
         chamado => chamado.id === id
     );
 
@@ -252,12 +331,11 @@ function aoEditarChamado(id) {
         String(id)
     );
 
-    window.location.href = "index.html";
-
+    window.location.href = "criar.html";
 }
 
 // Executada quando o usuário solicita a exclusão.
-function aoExcluirChamado(id) {
+async function aoExcluirChamado(id) {
 
     const confirmou = confirm(
         `Tem certeza de que deseja excluir o chamado #${id}?`
@@ -267,15 +345,24 @@ function aoExcluirChamado(id) {
         return;
     }
 
-    const sucesso = removerChamado(id);
+    const { error } = await supabaseClient
+        .from("chamados")
+        .delete()
+        .eq("id", id);
 
-    if (!sucesso) {
+    if (error) {
+        console.error("Erro ao excluir chamado:", error);
+
         alert("Não foi possível excluir esse chamado.");
         return;
     }
 
-    renderizarLista();
+    // Remove o chamado da lista exibida
+    chamadosBanco = chamadosBanco.filter(
+        chamado => chamado.id !== id
+    );
 
+    renderizarLista();
 }
 
 // Formata a data para DD/MM/AAAA HH:MM.

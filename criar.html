@@ -8,8 +8,6 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#2F6F5E">
     <link rel="stylesheet" href="style.css">
-    <script src="JS/storage.js" defer></script>
-    <script src="app.js" defer></script>
 </head>
 
 <body>
@@ -74,12 +72,66 @@
         <p>Copyright © 2026 by João Pedro</p>
     </footer>
 
+    <!-- Biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Configuração e conexão -->
+    <script src="banco/config.js"></script>
+    <script src="banco/supabase.js"></script>
+
+    <!-- Proteção da página de criação -->
     <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("./service-worker.js");
-            });
-        }
+        (async function protegerCriar() {
+
+            // Verifica se está logado
+            const { data: { session }, error } =
+                await supabaseClient.auth.getSession();
+
+            if (error || !session) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Busca o perfil do usuário
+            const { data: perfil, error: erroPerfil } =
+                await supabaseClient
+                    .from("perfis")
+                    .select("tipo, nome")
+                    .eq("id", session.user.id)
+                    .single();
+
+            // Sem perfil válido, volta ao login
+            if (erroPerfil || !perfil) {
+                await supabaseClient.auth.signOut();
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Permite aluno, professor e diretor
+            const perfisPermitidos = ["aluno", "professor", "diretor"];
+
+            if (!perfisPermitidos.includes(perfil.tipo)) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Guarda os dados do usuário
+            localStorage.setItem("nomeUsuario", perfil.nome);
+            localStorage.setItem("tipoUsuario", perfil.tipo);
+
+            // Carrega o armazenamento e o formulário somente após validar
+            const storage = document.createElement("script");
+            storage.src = "JS/storage.js";
+
+            storage.onload = function () {
+                const app = document.createElement("script");
+                app.src = "app.js";
+                document.body.appendChild(app);
+            };
+
+            document.body.appendChild(storage);
+
+        })();
     </script>
 
 </body>
