@@ -63,7 +63,8 @@
 
                     <div class="campo">
                         <label for="cpfDirecao">E-mail</label>
-                        <input type="email" id="emailDirecao" placeholder="email@gmail.com" autocomplete="email" required>
+                        <input type="email" id="emailDirecao" placeholder="email@gmail.com" autocomplete="email"
+                            required>
                     </div>
 
                     <div class="campo">
@@ -92,6 +93,18 @@
     <script src="banco/config.js"></script>
     <script src="banco/supabase.js"></script>
     <script src="entrada.js"></script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./service-worker.js")
+                .then(registro => {
+                    console.log("Service Worker registrado!", registro);
+                })
+                .catch(erro => {
+                    console.error("Erro ao registrar Service Worker:", erro);
+                });
+        }
+    </script>
 
 </body>
 
